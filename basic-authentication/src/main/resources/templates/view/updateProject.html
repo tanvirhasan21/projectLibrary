@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="www.http://thymeleaf.org">
+
+<head>
+  <meta charset="UTF-8">
+  <div>
+  <title>Update</title>
+
+  </div>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+        crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag/dist/css/multi-select-tag.css">
+  <script type="text/javascript" th:inline="javascript">
+    function dateSetter(element) {
+      var text = element.options[element.selectedIndex].text;
+      if(text=="Pre"){
+        document.getElementById("startDate").value="";
+      }
+
+    }
+  </script>
+  <script th:inline="javascript">
+    function populateExistingMembers(){
+      console.log([[${existingMembers}]].toString());
+      var list=[[${existingMembers}]];
+      for(i=0;i<list.length;i++){
+        console.log(list[i]+",");
+        document.getElementById('displayList').value += list[i]+",";
+      }
+      // document.getElementById('displayList').value=[[${existingMembers}]].toString();
+
+    }
+  </script>
+</head>
+<body onload="populateExistingMembers()">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <div class="container-fluid">
+    <a style="margin-left: 40rem;margin-right: 30rem" class="navbar-brand" >Project Management System</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link" th:href="@{/projects/projectList}" tabindex="-1" >Project List</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-6 offset-md-3" >
+      <div class="card">
+        <div class="card-header">
+          <h2 class="text-center" >Edit Project <h2 class="text-center" autocapitalize="words" th:text="${project.name}"></h2></h2>
+        </div>
+        <div class="card-body">
+          <form
+                  method="post"
+                  role="form"
+                  th:action="@{/projects/updateProject/{id}(id=${project.id})}"
+                  th:object="${project}"
+          >
+            <h1 value="${project.name}"></h1>
+            <div class="form-group mb-3">
+              <label class="form-label">Name</label>
+              <input
+                      class="form-control"
+                      id="name"
+                      th:field="*{name}"
+                      type="text"
+              />
+            </div>
+
+            <div class="form-group mb-3">
+              <label class="form-label">Intro</label>
+              <input
+                      class="form-control"
+                      id="intro"
+                      th:field="*{intro}"
+                      type="text"
+              />
+            </div>
+
+            <div hidden class="form-group mb-3">
+              <label class="form-label">Owner</label>
+              <input
+
+                      class="form-control"
+                      id="owner"
+                      th:field="*{ownerId}"
+                      type="text"
+              />
+            </div>
+
+            <div class="form-group mb-3">
+              <label class="form-label">Status</label>
+              <select onchange="dateSetter(this)" th:field="*{status}" id="status" name="status" class="status">
+                <option value="Pre" >Pre</option>
+                <option value="Start">Start</option>
+                <option value="End">End</option>
+              </select>
+            </div>
+
+            <div class="form-group mb-3">
+              <label class="form-label">Start Date </label>
+              <input  onchange="checkDate()"
+                      type="date"
+
+                      id="startDate"
+                      th:field="*{startDate}"
+
+              />
+            </div>
+
+
+            <div class="form-group mb-3">
+              <label class="form-label">End Date</label>
+              <input  required
+                      onchange="checkDate()"
+                      type="date"
+                      id="endDate"
+                      th:field="*{endDate}"
+
+              />
+              <p id="dateError" style="display: none" class="alert alert-danger">Invalid start or enddate.</p>
+            </div>
+
+<!--            hidden input field binded with all user list  -->
+            <input type="hidden" id="uList" value="${allUserList}">
+
+            <div form-group class="mx-auto row">
+              <label >Members</label>
+              <select id="members" name="members" multiple >
+                <option th:each="i : ${allUserList}" th:value="${i.id}" th:text="${i.name}" th:selected="${existingMembers.contains(i)}"
+                ></option>
+
+              </select>
+              <button style="background: black;color: white;width: fit-content;margin-top: 1rem" class="btn btn-primary" type="button" onclick="getSelected()">Confirm</button>
+            </div>
+
+            <div></div>
+
+            <div class="form-group" >
+              <label hidden>Added members</label>
+              <input
+                      hidden
+                      class="membersList"
+                      id="membersList"
+                      name="membersList"
+                      type="text"
+
+
+              />
+            </div>
+
+            <div hidden style="margin-top: 1rem" class="form-group">
+              <label >Selected members</label>
+              <input
+
+
+                      style="margin-top: 0.5rem;
+                           width: 30rem;
+                          "
+                      class="displayList"
+                      id="displayList"
+                      name="displayList"
+                      type="text"
+
+
+              />
+            </div>
+
+
+
+
+            <div class="form-group">
+              <button class="btn btn-primary" style="color: white;background: black;margin-top: 1rem" type="submit">Update Project</button>
+            </div>
+          </form>
+
+
+          <script>
+            const select2=document.getElementById('members')
+            function getSelected(){
+              const selectedOptions=[];
+              const selectedNames=[];
+              for(const option of select2.options){
+                if(option.selected){
+                  selectedOptions.push(option.value);
+                }
+              }
+              if(selectedOptions.length>5){
+                alert("You can only select upto 5 members");
+                for(const option of select2.options){
+
+                  option.selected=false;
+
+                }
+              }
+              console.log(selectedOptions);
+
+              document.getElementById('membersList').value=selectedOptions.toString();
+
+              // for(const i of selectedOptions){
+              //     fetch("http://localhost:8099/getName/"+i)
+              //         .then(response => response.text())
+              //         .then(data => {
+              //             console.log(data);
+              //             selectedNames.push(data);
+              //             console.log(selectedNames);
+              //         })
+              //         .catch(error => {
+              //             console.error("Error fetching data:", error);
+              //         });
+              //
+              // }
+              // document.getElementById('membersList').value=selectedNames.toString();
+              // document.getElementById("membersList").value=selectedNames.toString();
+              // console.log(selectedNames);
+              // console.log(selectedNames.toString());
+              // document.getElementById('displayList').value=selectedNames.toString();
+              // console.log(document.getElementById('displayList').value);
+              // console.log( document.getElementById('membersList').value);
+
+
+              const fetchPromises = selectedOptions.map(i => {
+                return fetch("http://localhost:8099/getName/" + i)
+                        .then(response => response.text())
+                        .catch(error => {
+                          console.error("Error fetching data:", error);
+                        });
+              });
+
+              Promise.all(fetchPromises)
+                      .then(dataArray => {
+                        const selectedNames = dataArray.filter(data => data !== undefined);
+                        document.getElementById('displayList').value += selectedNames.join(','); // set values
+                      });
+            }
+          </script>
+
+
+
+          <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+          <script src="https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag/dist/js/multi-select-tag.js"></script>
+          <script>
+
+            let select = document.getElementById("members");
+
+            function populateList(){
+              const users = document.getElementById(uList);
+              for (let i = 0; i < users.length; i++) {
+                let optn = users[i].name;
+                let u_id=users[i].id
+                let el = document.createElement("option");
+                el.textContent = optn;
+                el.value = u_id;
+                select.appendChild(el);
+              }
+            }
+
+
+
+          </script>
+
+          <script>
+            new MultiSelectTag('members',{
+              rounded: true,    // default true
+              shadow: false,      // default false
+              placeholder: 'Search',  // default Search...
+              onChange: function(values) {
+                console.log(values)
+              }
+            })  // id
+          </script>
+
+          <script>
+            function checkDate(){
+              let startDate=new Date(document.getElementById('startDate').value);
+              let endDate=new Date(document.getElementById('endDate').value);
+              if(startDate){
+                document.getElementById('status').value="Start";
+              }
+              if(startDate && endDate){
+                if(startDate>endDate){
+                  document.getElementById('dateError').style.display='block';
+                  document.getElementById('endDate').value=null;
+                }
+                else {
+                  document.getElementById('dateError').style.display='none';
+                }
+              }
+              if(!startDate){
+
+              }
+            }
+          </script>
+
+
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

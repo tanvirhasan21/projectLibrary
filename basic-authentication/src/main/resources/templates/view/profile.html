@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="www.http://thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>All created projects</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+          crossorigin="anonymous">
+
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+        <a style="margin-left: 40rem;margin-right: 25rem" class="navbar-brand" href="projectList">Project Management System</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+<!--                    <a class="nav-link active" aria-current="page" href="profile" th:text="${currentUser.name}"></a>-->
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="projectList">Project List</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/logout}" tabindex="-1" >Log out</a>
+                </li>
+                <!--                <li class="nav-item">-->
+                <!--                    <a class="nav-link" th:href="@{/projects/jasperpdf/export}" tabindex="-1" >Generate Report</a>-->
+                <!--                </li>-->
+            </ul>
+        </div>
+    </div>
+</nav>
+
+
+
+
+<div class="container mt-4 mb-4 p-3 d-flex justify-content-center">
+    <div class="card p-4">
+        <div class=" image d-flex flex-column justify-content-center align-items-center">
+            <!--<button class="btn">
+&lt;!&ndash;                <img src="https://www.pngarts.com/explore/215270/download/215269" height="100" width="100" />&ndash;&gt;
+                <img src="/images/defaultImg.png" height="100" width="100"/>
+
+            </button>-->
+
+            <div th:if="${encodedImage != null}">
+                <!--                <p>it works</p>-->
+                <!--<img th:src="@{'data:image/png;base64,' + #strings.bytes(profilePicture)}" alt="Profile Picture" height="100" width="100" />-->
+                <!--                <img src="data:image/png;base64,${encodedImage}" alt="Profile Picture" />-->
+
+                <img id="profilePic"  th:src="${encodedImage}" style="width: 100px; height: 100px;" />
+            </div>
+            <div th:unless="${encodedImage != null}">
+                <!-- Default message if no profile picture is available -->
+                <img src="/images/defaultImg.png" alt="Default Profile Picture" height="100" width="100" />
+            </div>
+
+
+            <span class="name mt-3" th:text="${currentUser.name}" style="font-weight: bold"></span>
+            <span class="name mt-3" th:text="${currentUser.email}"></span>
+            <!--<div class=" d-flex mt-2">
+                <button class="btn1 btn-dark" th:href="@{/users/showUpdateForm}">Edit Profile</button>
+            </div>-->
+            <div class="d-flex mt-2">
+                <a class="btn1 btn-dark" style="text-decoration: none;border-radius: 2rem;padding:4px;" th:href="@{/users/showUpdateForm}">Edit Profile</a>
+            </div>
+            <div class="text mt-3">
+                <span> <span class="name mt-3" th:text="${currentUser.name}"></span> is a valuable and resourceful project developer and user of project management system.<br><br> </span>
+            </div>
+
+            <div class="gap-3 mt-3 icons d-flex flex-row justify-content-center align-items-center">
+                <span><i class="fa fa-twitter"></i></span>
+                <span><i class="fa fa-facebook-f"></i></span>
+                <span><i class="fa fa-instagram"></i></span>
+                <span><i class="fa fa-linkedin"></i></span>
+            </div>
+            <div th:if="${#lists.size(projects) > 0}">
+                <table class="table table-bordered table-hover">
+                    <thead class="table-dark">
+                    <tr>
+                        <th>Project Name</th>
+                        <th>Project Description</th>
+                        <th>Project status</th>
+                        <!--                    <th>Owner</th>-->
+                        <!--            <th>project id</th>-->
+                        <!--                    <th>project Start Date</th>-->
+                        <!--                    <th>project End Date</th>-->
+                        <!--                    <th>project members</th>-->
+                        <!--                    <th>Actions</th>-->
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="project:${projects}" >
+                        <td th:text="${project.name}" ></td>
+                        <td th:text="${project.intro}"></td>
+                        <td th:text="${project.status}"></td>
+                    </tr>
+                    </tbody>
+                </table>
+
+            </div>
+            <div th:unless="${#lists.size(projects) > 0}">
+                <p>This user currently doesn't have any projects.</p>
+            </div>
+
+
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+
+
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+<!--<script>-->
+<!--    window.onload = function(){-->
+
+<!--        var proPic = '${encodedImage}';-->
+<!--        console.log(proPic);-->
+<!--        var img = new Image();-->
+<!--        img.src = 'data:image/png;base64,'+ proPic;-->
+<!--        document.getElementById('profilePic').src = img.src;-->
+<!--    };-->
+
+
+
+
+
+<!--</script>-->
+
+
+
+
+</body>
+</html>

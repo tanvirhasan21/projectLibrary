@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="www.http://thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Create new project</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag/dist/css/multi-select-tag.css">
+    <script type="text/javascript">
+        function dateSetter(element) {
+            var text = element.options[element.selectedIndex].text;
+            if(text=="Pre"){
+                document.getElementById("startDate").value="";
+            }
+
+        }
+    </script>
+
+
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+        <a style="margin-left: 35rem;margin-right: 25rem" class="navbar-brand" href="">Project Management System</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="projectList" tabindex="-1" >Project List</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/logout}" tabindex="-1" >Log out</a>
+                </li>
+                <!--                <li class="nav-item">-->
+                <!--                    <a class="nav-link" th:href="@{/projects/jasperpdf/export}" tabindex="-1" >Generate Report</a>-->
+                <!--                </li>-->
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-6 offset-md-3" >
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="text-center" >Add Project</h2>
+                </div>
+                <div class="card-body">
+                    <form
+                            method="post"
+                            role="form"
+                            th:action="@{/projects/createNewProject}"
+                            th:object="${project}"
+                    >
+                        <div class="form-group mb-3">
+                            <label class="form-label">Name</label>
+                            <input
+                                    class="form-control"
+                                    id="name"
+                                    name="name"
+                                    type="text"
+                                    required
+                            />
+                            <!--        <p th:if="${#fields.hasErrors('name')}" th:style="'color: red;'">Name cannot be empty.</p>-->
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label class="form-label">Intro</label>
+                            <input
+                                    class="form-control"
+                                    id="intro"
+                                    name="intro"
+                                    type="text"
+                                    required
+                            />
+
+                        </div>
+
+                        <div class="form-group mb-3" hidden>
+                            <label class="form-label">Owner</label>
+                            <input
+                                    class="form-control"
+                                    id="owner"
+                                    name="owner"
+                                    type="text"
+
+                            />
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label class="form-label">Status</label>
+                            <select required id="status" name="status" class="status" onchange="dateSetter(this)">
+                                <option value="Pre" >Pre</option>
+                                <option value="Start" selected>Start</option>
+                                <option value="End">End</option>
+
+                            </select>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label class="form-label">Start Date </label>
+                            <input
+
+                                    type="date"
+                                    id="startDate"
+                                    name="startDate"
+                                    onchange="checkDate()"
+
+                            />
+                        </div>
+
+
+                        <div class="form-group mb-3">
+                            <label class="form-label">End Date</label>
+                            <input
+                                    type="date"
+                                    id="endDate"
+                                    name="endDate"
+                                    onchange="checkDate()"
+                                    required
+
+
+                            />
+                            <p id="dateError" style="display: none" class="alert alert-danger">Invalid start or enddate.</p>
+
+                        </div>
+
+<!--                        hidden element with all users list to access them           -->
+                        <input type="hidden" id="uList" value="${allUserList}">
+
+
+<!--                        the main mmultiselect div to change with mobiscroll library    -->
+
+
+                        <div style="display: flex;flex-direction: column;justify-content: start" form-group class="mx-auto row">
+                            <label >Members</label>
+                            <select  id="members" name="members" multiple>
+                                <option th:each="i : ${allUserList}" th:value="${i.id}" th:text="${i.name}"
+                                ></option>
+
+                            </select>
+                            <button style="background: black;color: white;width: fit-content;margin-top: 1rem" class="btn btn-primary" type="button" onclick="getSelected()">Confirm</button>
+                        </div>
+
+                        <div></div>
+
+<!--                        hidden members element            -->
+                        <div class="form-group" >
+                            <label hidden>Added members</label>
+                            <input
+                                    hidden
+                                    class="membersList"
+                                    id="membersList"
+                                    name="membersList"
+                                    type="text"
+
+
+                            />
+                        </div>
+
+
+<!--                        shows the selected elements            -->
+                        <div hidden style="margin-top: 1rem" class="form-group">
+                            <label >Selected members</label>
+                            <input
+
+                                    style="margin-top: 0.5rem;
+                           width: 30rem;
+                          "
+                                    class="displayList"
+                                    id="displayList"
+                                    name="displayList"
+                                    type="text"
+
+
+                            />
+                        </div>
+
+
+                        <div class="form-group">
+                            <button style="background: black;color: white;margin-top: 1rem;margin-bottom: 1rem" class="btn btn-primary" type="submit">Create Project</button>
+                        </div>
+                    </form>
+
+<!--                    getting the value of the selected items -->
+                    <script>
+                        const select2=document.getElementById('members')
+                        function getSelected(){
+                            const selectedOptions=[];
+                            const selectedNames=[];
+                            for(const option of select2.options){
+                                if(option.selected){
+                                    selectedOptions.push(option.value);
+                                }
+                            }
+                            if(selectedOptions.length>5){
+                                alert("You can only select upto 5 members");
+                                for(const option of select2.options){
+
+                                    option.selected=false;
+
+                                }
+                            }
+                            console.log(selectedOptions);
+
+                            document.getElementById('membersList').value=selectedOptions.toString();
+
+                            // for(const i of selectedOptions){
+                            //     fetch("http://localhost:8099/getName/"+i)
+                            //         .then(response => response.text())
+                            //         .then(data => {
+                            //             console.log(data);
+                            //             selectedNames.push(data);
+                            //             console.log(selectedNames);
+                            //         })
+                            //         .catch(error => {
+                            //             console.error("Error fetching data:", error);
+                            //         });
+                            //
+                            // }
+                            // document.getElementById('membersList').value=selectedNames.toString();
+                            // document.getElementById("membersList").value=selectedNames.toString();
+                            // console.log(selectedNames);
+                            // console.log(selectedNames.toString());
+                            // document.getElementById('displayList').value=selectedNames.toString();
+                            // console.log(document.getElementById('displayList').value);
+                            // console.log( document.getElementById('membersList').value);
+
+
+                            const fetchPromises = selectedOptions.map(i => {
+                                return fetch("http://localhost:8099/getName/" + i)
+                                    .then(response => response.text())
+                                    .catch(error => {
+                                        console.error("Error fetching data:", error);
+                                    });
+                            });
+
+                            Promise.all(fetchPromises)
+                                .then(dataArray => {
+                                    const selectedNames = dataArray.filter(data => data !== undefined);
+                                    document.getElementById('displayList').value = selectedNames.join(', '); // set values
+                                });
+                        }
+                    </script>
+
+
+
+                    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+                    <script>
+
+                        let select = document.getElementById("members");
+
+                        function populateList(){
+                            const users = document.getElementById(uList);
+                            for (let i = 0; i < users.length; i++) {
+                                let optn = users[i].name;
+                                let u_id=users[i].id
+                                let el = document.createElement("option");
+                                el.textContent = optn;
+                                el.value = u_id;
+                                select.appendChild(el);
+                            }
+                        }
+
+
+
+                    </script>
+                    <script>
+                        function checkDate(){
+                            let startDate=new Date(document.getElementById('startDate').value);
+                            let endDate=new Date(document.getElementById('endDate').value);
+                            if(startDate){
+                                document.getElementById('status').value="Start";
+                            }
+                            if(startDate && endDate){
+                                if(startDate>endDate){
+                                    document.getElementById('dateError').style.display='block';
+                                    document.getElementById('endDate').value=null;
+                                }
+                                else {
+                                    document.getElementById('dateError').style.display='none';
+                                }
+                            }
+                        }
+                    </script>
+                    <script src="https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag/dist/js/multi-select-tag.js"></script>
+                    <script>
+                        new MultiSelectTag('members',{
+                            rounded: true,    // default true
+                            shadow: false,      // default false
+                            placeholder: 'Search',  // default Search...
+                            onChange: function(values) {
+                                console.log(values)
+                            }
+                        })  // id
+                    </script>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="mx-auto w-50">
+
+
+
+</div>
+</body>
+</html>

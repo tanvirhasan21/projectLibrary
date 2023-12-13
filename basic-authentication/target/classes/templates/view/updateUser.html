@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="www.http://thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <div>
+        <title>Update</title>
+
+    </div>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+          crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag/dist/css/multi-select-tag.css">
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+        <a style="margin-left: 40rem;margin-right: 25rem" class="navbar-brand" >Project Management System</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/projects/profile}" tabindex="-1" style="border: 1px solid white">Back</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/projects/projectList}" tabindex="-1" >Project List</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-6 offset-md-3" >
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="text-center" >Edit User <h2 class="text-center" autocapitalize="words" th:text="${loggedInUser.name}"></h2></h2>
+                </div>
+                <div class="card-body">
+                    <form
+                            method="post"
+                            role="form"
+                            th:action="@{/users/updateUser}"
+                            th:object="${loggedInUser}"
+                            enctype="multipart/form-data"
+
+                    >
+                        <h1 value="${loggedInUser.name}"></h1>
+
+                        <div th:if="${encodedImage != null}" style="width:100%;text-align: center;" >
+                            <!--                <p>it works</p>-->
+                            <!--<img th:src="@{'data:image/png;base64,' + #strings.bytes(profilePicture)}" alt="Profile Picture" height="100" width="100" />-->
+                            <!--                <img src="data:image/png;base64,${encodedImage}" alt="Profile Picture" />-->
+
+                            <img id="profilePic"  th:src="${encodedImage}" style="width: 100px; height: 100px;margin: 0 auto" />
+                        </div>
+                        <div th:unless="${encodedImage != null}">
+                            <!-- Default message if no profile picture is available -->
+                            <img src="/images/defaultImg.png" alt="Default Profile Picture" height="100" width="100" />
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label class="form-label">Name</label>
+                            <input
+                                    class="form-control"
+                                    id="name"
+                                    th:field="*{name}"
+                                    type="text"
+                            />
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label class="form-label">Email</label>
+                            <input
+                                    class="form-control"
+                                    id="email"
+                                    th:field="*{email}"
+                                    type="text"
+                            />
+                        </div>
+
+
+
+
+                        <div class="form-group mb-3">
+                            <label class="form-label">Profile Picture</label>
+                            <input class="form-control" type="file" id="profilePicture" name="profilePicture" accept="image/*" />
+                            <!--              <p th:if="${#fields.hasErrors('profilePicture')}" th:style="'color: red;'" class="alert alert-danger">Please select a valid image file.</p>-->
+                        </div>
+
+                        <div class="form-group">
+                            <button class="btn btn-primary" style="color: white;background: black;margin-top: 1rem" type="submit">Update Information</button>
+                        </div>
+                    </form>
+
+
+
+                    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+                    <script src="https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag/dist/js/multi-select-tag.js"></script>
+
+
+
+
+
+
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

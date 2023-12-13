@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="www.http://thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>All created projects</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+          crossorigin="anonymous">
+
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+        <a style="margin-left: 40rem;margin-right: 20rem" class="navbar-brand" href="projectList">Project Management System</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="profile" th:text="${currentUser.name}"></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="newproject">Add project</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/logout}" tabindex="-1" >Log out</a>
+                </li>
+<!--                <li class="nav-item">-->
+<!--                    <a class="nav-link" th:href="@{/projects/jasperpdf/export}" tabindex="-1" >Generate Report</a>-->
+<!--                </li>-->
+            </ul>
+        </div>
+    </div>
+</nav>
+
+
+
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+
+
+<div class="card">
+    <div class="card-header">
+        <h2 class="text-center" >Project List</h2>
+    </div>
+    <div class="card-body">
+        <div class="container">
+            <div hidden class="row col-md-10">
+                <h2></h2>
+            </div>
+            <table class="table table-bordered table-hover">
+                <thead class="table-dark">
+                <tr>
+                    <th>Project Name</th>
+                    <th>Project Description</th>
+                    <th>Project status</th>
+                    <th>Owner</th>
+                    <!--            <th>project id</th>-->
+                    <th>project Start Date</th>
+                    <th>project End Date</th>
+                    <th>project members</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="project:${projects}" >
+                    <td th:text="${project.name}" ></td>
+                    <td th:text="${project.intro}"></td>
+                    <td th:text="${project.status}"></td>
+                    <td id="p_owner" th:text="${project.owner}"></td>
+
+                    <script>
+                        const ownerId=document.getElementById('p_owner').value;
+                        function getName(id){
+                            fetch("http://localhost:8099/getName/"+id)
+                                .then(response => response.json())
+                                .then(data => {
+                                    console.log("fetched user details:"+data);
+                                    document.getElementById("owner_name").value=data.toString();
+                                })
+                                .catch(error => {
+                                    console.error("Error fetching data:", error);
+                                });
+                        }
+                    </script>
+
+                    <td th:text="${project.startDate}"></td>
+                    <td th:text="${project.endDate}"></td>
+                    <td class="list-group">
+                        <ul th:each="member:${project.members}">
+                            <!--                    <button class="btn btn-light">-->
+<!--                            <li th:text="${member.name}"> ></li>-->
+                            <button class="btn btn-primary" style="color: black;background: white;" th:text="${member.name}" ></button>
+                            <!--                    </button>-->
+                        </ul>
+                    </td>
+
+                    <td >
+                        <button th:if="${currentUser.id == project.ownerId}" class="btn btn-primary" style="background: black;color: white" ><a style="text-decoration: none;color: white"  th:href="@{/projects/showFormForUpdateProject/{id}(id=${project.id})}" >Edit</a></button>
+                        <button th:if="${currentUser.id == project.ownerId}" class="btn btn-primary" style="background: black;color: white"><a style="text-decoration: none; color: white"  th:href="@{/projects/deleteProject/{id}(id=${project.id})}" onclick="return confirm('Are you sure you want to delete?')">Delete</a></button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+
+
+<div class="container" th:if="${projects.size>0}">
+    <div class="row">
+        <div class="col-md-6 offset-md-3" >
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="text-center" >Generate Report by date range</h2>
+                </div>
+                <div class="card-body">
+                    <div  class="mt-80 pt-50 mx-auto" >
+                        <form
+                                method="post"
+                                role="form"
+                                th:action="@{/projects/search}"
+                                class="form-horizontal  w-50 "
+                                style="display: flex;flex-direction: row"
+                        >
+                            <label hidden class="px-auto mx-auto" >Search by Date</label>
+                            <div class="form-group mb-3" style="margin-left: 1rem">
+                                <label class="control-label"> From </label>
+                                <input
+                                        required
+                                        style="width: 10rem;"
+                                        type="date"
+                                        id="srStartDate"
+                                        name="srStartDate"
+                                        class="form-control"
+
+
+                                />
+                            </div>
+
+                            <div class="form-group mb-3" style="margin-left: 1rem">
+                                <label class="control-label"> To</label>
+                                <input
+                                        required
+                                        style="width: 10rem"
+                                        type="date"
+                                        id="srEndDate"
+                                        name="srEndDate"
+                                        class="form-control"
+                                />
+                            </div>
+                            <div class="form-group mb-3">
+                                <button style="background: black;color:white;margin-top: 1.5rem;margin-left: 1rem" type="submit" class="btn btn-primary">Search</button>
+
+                            </div>
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+</body>
+</html>
